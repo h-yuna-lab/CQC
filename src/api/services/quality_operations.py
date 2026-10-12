@@ -298,9 +298,11 @@ class QualityOperationsService:
                 add("today", key, summary[key])
             add("today", "reinspection_ratio", _ratio(summary))
             add("today", "average_inference_ms", _average(summary))
-            for group in ("grades", "varieties", "bins", "suspicions"):
+            for group in ("grades", "varieties", "bins"):
                 for key, value in summary[group].items():
                     add(group, key, value)
+            for key in ("CULTIVAR_SUSPECT", "QUALITY_SUSPECT", "OTHER"):
+                add("suspicions", key, summary["suspicions"].get(key, 0))
             for point in self._statistics.points(snapshot_at, seconds=minutes * 60):
                 at = datetime.fromtimestamp(point["at"] / 1000, timezone.utc)
                 add(
