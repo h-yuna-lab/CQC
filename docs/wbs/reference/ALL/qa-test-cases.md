@@ -19,7 +19,7 @@
 | 관제 조회 API | QA-OPS | BE-05, FR-07~10·21·22·29·31·32, NFR-14 | 관제 OpenAPI의 snapshot·이력·통계·CSV가 구현됐다 |
 | 검수 이미지 | QA-IMG | BE-06, FR-16·42, NFR-09 | 시스템 오류·저신뢰 재검사 저장·목록·미리보기·선택 삭제·종류별 100/200장 순환이 구현됐다(#55) |
 | Simulator·검수 | QA-SIM, QA-OPS-16 | BE-07, FR-15·18·23·24·33·46~49·54 | 독립 Simulator(자동 재생·정지/재개·위치 복구·장애 6종·다음 1건·라인 속도 1·2·3초), `PUT /simulator`, 검수 API가 구현·배포됐다 |
-| 웹 관제 화면 | QA-WEB | FE-02~08, FR-06·20~22·35·36·41, NFR-11·12 | 학원 서버 3100이 실제 Backend에 연결된 API 모드로 배포되어 있다(10-02~) |
+| 웹 관제 화면 | QA-WEB | FE-02–08, FR-06·20–22·35·36·41, NFR-11·12 | 학원 서버 3100이 실제 Backend에 연결된 API 모드로 배포되어 있다(10-02–) |
 | 자동 시험 | QA-AUTO | 전체 | 저장소 시험으로 재현할 수 있다 |
 
 ### 1.2 제외: 미확정·미구현 (구현되면 케이스 추가)
@@ -814,7 +814,7 @@ done
 - 절차: `curl -s -D - $BE/v1/quality/fault-images`
 - 기대 결과:
   - `items` ≤ 300(시스템 오류 100 + 저신뢰 200), 최신 `createdAt` 순
-  - 항목 키: `id`(`32자리 16진수_두 자리 번호`), `inspectionId`, `imageIndex`(0~11), `createdAt`(epoch ms), `errorCode`(저신뢰는 `null`), `previewUrl`(`/api/quality/previews/<id>`), `category`(`SYSTEM_ERROR`·`LOW_CONFIDENCE`), `decisionReason`, `cultivarConfidence`·`qualityConfidence`·`appliedCultivarThreshold`·`appliedQualityThreshold`(0~1 또는 `null`)
+  - 항목 키: `id`(`32자리 16진수_두 자리 번호`), `inspectionId`, `imageIndex`(0–11), `createdAt`(epoch ms), `errorCode`(저신뢰는 `null`), `previewUrl`(`/api/quality/previews/<id>`), `category`(`SYSTEM_ERROR`·`LOW_CONFIDENCE`), `decisionReason`, `cultivarConfidence`·`qualityConfidence`·`appliedCultivarThreshold`·`appliedQualityThreshold`(0–1 또는 `null`)
   - `?category=LOW_CONFIDENCE`, `?inspectionId=<id>`로 걸러진다
   - `$RUN-ins08` 항목: `imageIndex=0`, `errorCode=INFERENCE_HTTP_ERROR`
   - 시간 초과 기록(E2)은 `errorCode=INFERENCE_TIMEOUT`으로 보인다
@@ -864,7 +864,7 @@ done
 - 절차: 손상 묶음 12장 요청을 9번 보낸다: `for n in 1 2 3 4 5 6 7 8 9; do send $BE/v1/inspections $RUN-img06-$n qa-tmp/broken 15.0 > /dev/null; done`
 - 기대 결과:
   - 목록 100장 (12×9=108 중 오래된 8장 삭제)
-  - `$RUN-img06-1`은 `imageIndex` 8~11의 4장만 남고, `-2`~`-9`는 12장씩 모두 남는다
+  - `$RUN-img06-1`은 `imageIndex` 8–11의 4장만 남고, `-2`–`-9`는 12장씩 모두 남는다
   - 시스템 오류 이미지가 100장이다. 저신뢰 재검사 이미지(최대 200장)는 따로 세며 이 순환에 밀려나지 않는다
   - 웹 검수 이미지 창 요약 `시스템 오류 100/100`
   - 검사 이력 9건은 모두 남는다
@@ -1085,7 +1085,7 @@ const d = document.documentElement;
   3. 1시간마다 다른 탭을 10분 띄웠다가 돌아온다.
 - 기대 결과: 강제 GC 뒤 heap이 증가 추세 없이 유지, DOM 노드 수가 일정, 끊긴 구간 밖에서 연결 배지가 계속 `서버 관제`, `오늘 저장 검사`가 계속 증가, 브라우저 예외 0건. 재배포로 끊기면 경고가 뜨고 복구 뒤 새로고침 없이 경고가 사라진다.
 - 탭 전환: 숨김 중에는 조회가 느려져도 되고, 돌아온 뒤 몇 초 안에 최신 수치로 돌아오며 오류가 없다.
-- 기준값: 10-06 3시간 25분 결과 — GC 뒤 heap 6.8~8.7MB, DOM 1,115~1,217개(GC 시점), 예외 0, 탭 복귀 1초([FE-08](../../FE-08.md), #73).
+- 기준값: 10-06 3시간 25분 결과 — GC 뒤 heap 6.8–8.7MB, DOM 1,115–1,217개(GC 시점), 예외 0, 탭 복귀 1초([FE-08](../../FE-08.md), #73).
 
 ### 5.7 Simulator (QA-SIM)
 
@@ -1235,7 +1235,7 @@ sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Con
 - 기대 결과(제안):
   1. 100건이 모두 저장되고 이웃 간격 중앙값 2.0초(±0.1초), 최대 4초 미만(처리 공백 없음)
   2. 시간 초과·추론 오류 0건
-  3. 재검사는 저신뢰 사유만 있고 비율 20% 이하(10-02~10-05 운영 13~16%)
+  3. 재검사는 저신뢰 사유만 있고 비율 20% 이하(10-02–10-05 운영 13–16%)
   4. 처리량 초당 0.5건(±0.05). 초당 2건 목표는 미달로 기록한다(1.2절)
 - 기록: 측정 구간 시작·끝 시각, 커밋, 모델 버전, 재검사 비율
 
@@ -1265,8 +1265,8 @@ sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Con
 
 | 파트 | 담당 | 케이스 | 수 | 실행 환경 |
 |---|---|---|---:|---|
-| DM | 조현재 | QA-DEP-02·03, QA-INF-01~08, QA-INS-01~06(모델·임계값 판정), QA-SIM-13(수용 기준) | 17 | E1, QA-INS-06만 E2 |
-| BE | 홍준희 | QA-INS-07~17, QA-OPS-01~16, QA-IMG-01~06, QA-SIM-03~07·09~12, QA-AUTO-01·02 | 44 | E1 읽기 + E2 장애 주입 |
+| DM | 조현재 | QA-DEP-02·03, QA-INF-01–08, QA-INS-01–06(모델·임계값 판정), QA-SIM-13(수용 기준) | 17 | E1, QA-INS-06만 E2 |
+| BE | 홍준희 | QA-INS-07–17, QA-OPS-01–16, QA-IMG-01–06, QA-SIM-03–07·09–12, QA-AUTO-01·02 | 44 | E1 읽기 + E2 장애 주입 |
 | FE | 강성민 | QA-WEB-01~19·05-1, QA-AUTO-03 | 21 | E3(E1 3100 읽기, 조작·장애는 E2 연결) |
 | MO | 홍유나 | QA-DEP-01·04~07, QA-IMG-07, QA-SIM-01·02·08 | 9 | 서버 컨테이너·볼륨·재시작, E2 |
 
@@ -1280,14 +1280,14 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 
 | QA 케이스 | BE-10 시험 | 비고 |
 |---|---|---|
-| QA-INS-07 | BND-01~04, DUP-01·02 (2단계 통과) | E1에서 l~o만 다시 확인 |
-| QA-INS-08~12 | INS-07~09, TIM-01~07 (2단계 통과) | E1 가능한 QA-INS-08만 다시 확인 |
+| QA-INS-07 | BND-01–04, DUP-01·02 (2단계 통과) | E1에서 l–o만 다시 확인 |
+| QA-INS-08–12 | INS-07–09, TIM-01–07 (2단계 통과) | E1 가능한 QA-INS-08만 다시 확인 |
 | QA-INS-13, QA-OPS-14, QA-SIM-09 | DB-01·02 | |
 | QA-INS-14·15 | INS-10~12 (2단계 통과) | |
 | QA-OPS-02·12 | OPS-02 | |
 | QA-OPS-03~09 | OPS-01 | |
 | QA-OPS-10·11 | OPS-03 | |
-| QA-IMG-01~06 | IMG-01~05 | |
+| QA-IMG-01–06 | IMG-01–05 | |
 | QA-SIM-06 | TIM-09 (2단계), E2E-05 | |
 | QA-SIM-08 | SIM-01 | |
 | QA-SIM-13 | E2E-01 | 기준은 10-08 확정 |
@@ -1298,10 +1298,10 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 학원 서버를 오염시키지 않도록 E1 읽기 케이스를 먼저, 장애 주입은 E2에서 나중에 한다. 측정 중에는 dev에 푸시하지 않는다(Jenkins 재배포).
 
 1. 전원: QA-AUTO-01~03 (BE·FE)
-2. E1: QA-DEP-02 → QA-INF 전체 → QA-INS-01~05·07·08 → QA-OPS-01·03~13·15 → QA-IMG-01~05 (DM → BE)
+2. E1: QA-DEP-02 → QA-INF 전체 → QA-INS-01–05·07·08 → QA-OPS-01·03–13·15 → QA-IMG-01–05 (DM → BE)
 3. E1: QA-OPS-16(본인 `$RUN` 행만), QA-SIM-01·02·10·13 (BE·MO·DM)
-4. E3(E1 3100): QA-WEB-01~03·05·05-1·06~08·12~19 (FE)
-5. E2: QA-DEP-01·03~07 → QA-INS-06·10~17 → QA-OPS-02·14 → QA-IMG-06·07 → QA-SIM-03~09·11·12 → QA-WEB-04·09~11 → QA-AUTO-02 (MO·DM·BE·FE)
+4. E3(E1 3100): QA-WEB-01–03·05·05-1·06–08·12–19 (FE)
+5. E2: QA-DEP-01·03–07 → QA-INS-06·10–17 → QA-OPS-02·14 → QA-IMG-06·07 → QA-SIM-03–09·11·12 → QA-WEB-04·09–11 → QA-AUTO-02 (MO·DM·BE·FE)
 
 ### 6.4 기록표
 
@@ -1325,10 +1325,10 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 | QA-INF-03 | DM | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | FL·LQ·MIS 각 3회 확률 차 0, 표 대비 ±0.005 안(LQ 0.466, MIS 0.513) |
 | QA-INF-04 | DM | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | decode 98·model 137·total 235ms, inference_time_ms=model |
 | QA-INF-05 | DM | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 1·4·8·11장 모두 200, used_frame_count 일치 |
-| QA-INF-06 | DM | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | a~m 13행 상태·문구 일치, 각 오류 뒤 정상 200 |
+| QA-INF-06 | DM | 통과 | 조현재(에이전트) | 2026-10-07 09:27–09:40 | dev da6872f / cal-20260930 | a–m 13행 상태·문구 일치, 각 오류 뒤 정상 200 |
 | QA-INF-07 | DM | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 동시 예측 3건 중 /health 71ms |
 | QA-INF-08 | DM | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 36건 200, total 평균 300·p95 401·최대 473ms(라인 간격 안). p95가 기준 308.8의 1.30배 경계 → DM 기록 |
-| QA-INS-01 | DM | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 12건 COMPLETED·NORMAL, DEMO_BIN_01~12 기대값 일치 |
+| QA-INS-01 | DM | 통과 | 조현재(에이전트) | 2026-10-07 09:27–09:40 | dev da6872f / cal-20260930 | 12건 COMPLETED·NORMAL, DEMO_BIN_01–12 기대값 일치 |
 | QA-INS-02 | DM | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 9·18·14 → 200(BIN_01·02·02), 8.9·18.1·abc·nan·inf → 422 |
 | QA-INS-03 | DM | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | VIRTUAL_BRIX_MISSING·재검사 bin·통계 포함 |
 | QA-INS-04 | DM | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | LQ 0.466·LQ2 0.581·MIS 0.512 모두 LOW_QUALITY_CONFIDENCE, sweet |
@@ -1348,11 +1348,11 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 | QA-OPS-01 | BE | 통과 | BE(#103 보고) | 2026-10-07 | E1 `24e49e1` | snapshot 전체 필드 기대값 충족. [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
 | QA-OPS-02 | BE | PASS | BE (Codex) | 2026-10-10 13:50:35~13:51:47 KST | E2 `cqc-qa-e2`, HEAD `6f445db`, Backend image source `45c33f5`, cal-20260930 | 인증 Simulator·2000ms 합의 조건의 지정 5건 HTTP200, 통계 total/normal/excluded +5/+4/+1, review/reinspection +2/+3, 품종·품질·bin·inferenceCount 및 SQL 일치. 기존 500ms 직접 요청 FAIL 기록 유지·소급 PASS 아님. 로컬 원자료 `outputs/qa-be-ops02-auth2s-final-20261010/RESULT.md`. [최종 보고](../../results/qa-be-20261010.md). |
 | QA-OPS-03 | BE | 통과(대행, BE 최종 PASS) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | B-FL 13.9 행 필드·시각 3형식·내림차순·bins 일치. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [OPS-01·§13.4](../../BE-10-results.md): 실제 DB 이력 변환/정상100 PASS; 전체 지정 행 기대값 대조는 후속 · [#103 BE 최종 PASS(10-08)](https://github.com/yuudong123/CQC/issues/103) |
-| QA-OPS-04 | BE | 통과(대행, BE 최종 PASS) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | INS-01·03·04·08 행 변환 일치. INS-10·12 행은 E2 전용(BE E2 INS-10·12 통과로 보완). [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [INS-02~09·OPS-02](../../BE-10-results.md): 정상/저신뢰/오류/timeout 상태·통계 정책 PASS; QA 지정 입력 전체는 별도 대조 · [#103 BE 최종 PASS(10-08)](https://github.com/yuudong123/CQC/issues/103) |
-| QA-OPS-05 | BE | PASS | E1 조현재(에이전트), E2 보완 BE (Codex) | E1 2026-10-08, E2 2026-10-10 13:12:58~13:13:00 KST | E2 `cqc-qa-e2`, HEAD `6f445db`, Backend image source `45c33f5`; E1 배포 SHA 연결 후속 유지 | 기존 대행 a~f·h~j·l~n 및 supplement OTHER 조건 재사용, E2 g TIMEOUT·k INFERENCE_TIMEOUT에서 `qa-e2-095231-01757e-ins12` 각 1회 포함. 검사일 10-08, HTTP200/no-store, total4/items4 및 동일 snapshot 2쪽 items0 확인. 로컬 원자료 `outputs/qa-be-ops05-20261010/`. [최종 보고](../../results/qa-be-20261010.md). |
+| QA-OPS-04 | BE | 통과(대행, BE 최종 PASS) | 조현재(에이전트) | 2026-10-08 15:27–15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | INS-01·03·04·08 행 변환 일치. INS-10·12 행은 E2 전용(BE E2 INS-10·12 통과로 보완). [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [INS-02–09·OPS-02](../../BE-10-results.md): 정상/저신뢰/오류/timeout 상태·통계 정책 PASS; QA 지정 입력 전체는 별도 대조 · [#103 BE 최종 PASS(10-08)](https://github.com/yuudong123/CQC/issues/103) |
+| QA-OPS-05 | BE | PASS | E1 조현재(에이전트), E2 보완 BE (Codex) | E1 2026-10-08, E2 2026-10-10 13:12:58–13:13:00 KST | E2 `cqc-qa-e2`, HEAD `6f445db`, Backend image source `45c33f5`; E1 배포 SHA 연결 후속 유지 | 기존 대행 a–f·h–j·l–n 및 supplement OTHER 조건 재사용, E2 g TIMEOUT·k INFERENCE_TIMEOUT에서 `qa-e2-095231-01757e-ins12` 각 1회 포함. 검사일 10-08, HTTP200/no-store, total4/items4 및 동일 snapshot 2쪽 items0 확인. 로컬 원자료 `outputs/qa-be-ops05-20261010/`. [최종 보고](../../results/qa-be-20261010.md). |
 | QA-OPS-06 | BE | 통과(대행, BE 최종 PASS) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 50+50 중복 0, 100·200, pageSize 20·page 0 → 422, 마지막+1 빈 목록. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [OPS-01](../../BE-10-results.md): 최신순225건·200+25 pagination PASS; 50/100 및 invalid 쿼리 전체 매트릭스 확인은 별도 · [#103 BE 최종 PASS(10-08)](https://github.com/yuudong123/CQC/issues/103) |
 | QA-OPS-07 | BE | 통과(기존 증거 재사용) | BE-10 기록 | 2026-10-06 | Linux MySQL8.4, 3/4 §11 | [OPS-01·03](../../BE-10-results.md): 조회 snapshotAt 고정 후 신규 검사 제외, 현재 조회와 구분 PASS |
-| QA-OPS-08 | BE | 통과(대행, BE 최종 PASS) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 4개 엔드포인트 × a~e·f 모두 422와 지정 code·no-store. [대행 결과](../../results/qa-be-proxy-20261008/README.md) · [#103 BE 최종 PASS(10-08)](https://github.com/yuudong123/CQC/issues/103) |
+| QA-OPS-08 | BE | 통과(대행, BE 최종 PASS) | 조현재(에이전트) | 2026-10-08 15:27–15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 4개 엔드포인트 × a–e·f 모두 422와 지정 code·no-store. [대행 결과](../../results/qa-be-proxy-20261008/README.md) · [#103 BE 최종 PASS(10-08)](https://github.com/yuudong123/CQC/issues/103) |
 | QA-OPS-09 | BE | 통과(기존 증거 재사용) | BE-10 기록 | 2026-10-06 | Linux MySQL8.4, 3/4 §11 | [OPS-01·03](../../BE-10-results.md): KST 자정 경계·기간 필터·00:00:00.123 대조 PASS |
 | QA-OPS-10 | BE | 부분 검증(대행, BE 검수) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 헤더·BOM·CRLF·따옴표·17열·행 수(total ±2)·brix false·이미지 열 없음. Excel 미설치로 UTF-8 BOM·한글 디코딩 확인. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [OPS-03·§13.2/13.4](../../BE-10-results.md): 전체 필터 CSV/BOM/KST ms·FE40392행 bytes 일치·정상100 ID 대조 PASS. Excel 수동 표시 등 전체 기대값은 별도 |
 | QA-OPS-11 | BE | 부분 검증(대행, BE 검수) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | `"'-qa-be-10081526-ops11"` 작은따옴표로 수식 무력화. Excel 직접 열기 미실행. [대행 결과](../../results/qa-be-proxy-20261008/README.md) |
@@ -1361,8 +1361,8 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 | QA-OPS-14 | BE | 통과(기존 증거 재사용) | BE-10 기록 | 2026-10-06 | Linux MySQL8.4, 3/4 §11 | [DB-01~02·LOG-01](../../BE-10-results.md): 실제 MySQL 중단 중 조회5 API503, Backend 재시작 없이 복구200·DB 오류 로그 연결 PASS |
 | QA-OPS-15 | BE | 통과 | BE(#103 보고) | 2026-10-08 09:20 | E1 `45c33f5` | KI-6. 10건 저장 10/10·시간 초과 0, `periodTotals["1"]` 39 = 직전 60초 history 39, points 합 23 = history 23. 10-07 회차(시간 초과 5건)는 dev 푸시 부하와 겹쳐 판정 제외. [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
 | QA-IMG-01 | BE | 통과(대행, BE 최종 PASS) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 본인 저신뢰 12장 LOW_CONFIDENCE, 정상·당도 누락 0장. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [IMG-01·§13.4](../../BE-10-results.md): 정상/당도누락 이미지0, 저신뢰3종/시스템오류4종 보관·sidecar 정책 PASS. QA 지정 입력/장수 전체와 구분 · [#103 BE 최종 PASS(10-08)](https://github.com/yuudong123/CQC/issues/103) |
-| QA-IMG-02 | BE | 통과(대행, BE 최종 PASS) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 300장·최신순·키 12개·필터·본인 ins08 항목. 시간 초과 항목 표시는 E2 전용. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [IMG-01~03](../../BE-10-results.md): category/inspectionId 목록·sidecar confidence/threshold/error 정책 PASS; 전체 QA 응답 필드 대조는 후속 · [#103 BE 최종 PASS(10-08)](https://github.com/yuudong123/CQC/issues/103) |
-| QA-IMG-03 | BE | 통과(대행, BE 최종 PASS) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 200 png no-store·SHA-256 일치, 잘못된 id 410·410·404. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [IMG-03~05·§13.3](../../BE-10-results.md): preview·삭제 후410 PASS; PNG hash/모든 잘못된 경로 조합 확인은 별도 · [#103 BE 최종 PASS(10-08)](https://github.com/yuudong123/CQC/issues/103) |
+| QA-IMG-02 | BE | 통과(대행, BE 최종 PASS) | 조현재(에이전트) | 2026-10-08 15:27–15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 300장·최신순·키 12개·필터·본인 ins08 항목. 시간 초과 항목 표시는 E2 전용. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [IMG-01–03](../../BE-10-results.md): category/inspectionId 목록·sidecar confidence/threshold/error 정책 PASS; 전체 QA 응답 필드 대조는 후속 · [#103 BE 최종 PASS(10-08)](https://github.com/yuudong123/CQC/issues/103) |
+| QA-IMG-03 | BE | 통과(대행, BE 최종 PASS) | 조현재(에이전트) | 2026-10-08 15:27–15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 200 png no-store·SHA-256 일치, 잘못된 id 410·410·404. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [IMG-03–05·§13.3](../../BE-10-results.md): preview·삭제 후410 PASS; PNG hash/모든 잘못된 경로 조합 확인은 별도 · [#103 BE 최종 PASS(10-08)](https://github.com/yuudong123/CQC/issues/103) |
 | QA-IMG-04 | BE | 통과(대행, BE 최종 PASS) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 본인 이미지 2장 삭제·중복/없는 id 무시·미리보기 410·이력·CSV 유지. [대행 결과](../../results/qa-be-proxy-20261008/README.md) / 이전 BE-10 기록: [IMG-05·§13.3](../../BE-10-results.md): 선택 삭제·잔존 목록·preview410 PASS; 전체 지정 선택 조합은 담당 대조 필요 · [#103 BE 최종 PASS(10-08)](https://github.com/yuudong123/CQC/issues/103) |
 | QA-IMG-05 | BE | 통과(대행, BE 최종 PASS) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | E1 학원 서버 · 실행 ID `qa-be-10081526` | 빈 목록 200, 나머지 4종 422 INVALID_IDS, 이미지 그대로. [대행 결과](../../results/qa-be-proxy-20261008/README.md) · [#103 BE 최종 PASS(10-08)](https://github.com/yuudong123/CQC/issues/103) |
 | QA-IMG-06 | BE | 통과(기존 증거 재사용) | BE-10 기록 | 2026-10-06 | Linux 저장소, 3/4 §11 | [IMG-02](../../BE-10-results.md): 시스템101→100/저신뢰201→200, 독립 oldest 삭제·최신 유지 PASS; Windows #99와 구분 |
@@ -1382,7 +1382,7 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 | QA-WEB-12 | FE | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 제목·부사/특 필터·100행·페이지 이동·이전 비활성·새로고침 문구·날짜 역전 경고·CSV 비활성. 오판 지정(12번)은 #110 BE-10 PASS로 갈음 · **10-08 관리자 페이지(`/admin`) 재확인 통과**(dev `e960d1f`, 로컬 웹 + QA 중계: 조회는 E1, 설정·삭제는 중계 안에서만): 안내 문구·부사/특 필터 50행 전부 일치·100행 1/120페이지·다음 페이지 행 겹침 없음·첫 페이지 이전 비활성·날짜 역전 경고와 CSV 비활성·초기화 |
 | QA-WEB-13 | FE | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 부사 필터 CSV 28,340행·BOM·25초 다운로드(#111 이후). Backend 대조는 BE-10 §13.2 / 이전: [§13.2](../../BE-10-results.md): #109 FE200 실제 다운로드40392행·Backend bytes/필드/BOM 일치 PASS. 지정 FE 필터 조작 전체 수용은 FE 담당 후속 · **10-08 관리자 페이지(`/admin`) 재확인 통과**(dev `e960d1f`, 로컬 웹 + QA 중계: 조회는 E1, 설정·삭제는 중계 안에서만): 부사 필터 CSV `cqc-inspections.csv` 37,943줄 = 같은 조건 Backend 직접 37,943줄 |
 | QA-WEB-14 | FE | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 기간 통계 창 표시(전체 1,460·재검사 10.8%·평균 추론 143ms) · **10-08 관리자 페이지(`/admin`) 재확인 통과**(dev `e960d1f`, 로컬 웹 + QA 중계: 조회는 E1, 설정·삭제는 중계 안에서만): 기간 통계 탭 표시(오늘 API total 5,045)·`cqc-period-statistics.csv` |
-| QA-WEB-15 | FE | 통과 | 조현재(에이전트) | 2026-10-07 | E1 `24e49e1`(PR #115 포함) | 1~4·6~8 통과(E1, 본인 qa 이미지 1장 삭제 12→11). 5번 전체 삭제는 300장 ID 본문 11,409바이트가 프록시 한도 8,192바이트를 넘어 413이었음(원인 확인). 한도를 16,384바이트로 올리고 300장 삭제 시험을 추가해 수정(0c679cd). 확인 시점 300장만 보내고 새 이미지는 제외하는 로직은 정상. 배포 뒤 서버에서 한 번 더 확인 **서버 재확인(10-07, 수정 배포 뒤): 존재하지 않는 ID 300개(본문 약 11.7KB)로 전체 삭제 요청 → 200, 공용 이미지 300장은 그대로 유지.** · **10-08 관리자 페이지(`/admin`) 재확인 통과**(dev `e960d1f`, 로컬 웹 + QA 중계: 조회는 E1, 설정·삭제는 중계 안에서만): 탭 `검수 이미지 300장` = `retention.images`·안내·요약(n/100·n/200)·열 6개·미리보기(1000px)·닫기·삭제 확인 문구와 요청 ID(한 장은 해당 ID 1개, 전체는 확인 창을 연 시점 300개). 실제 삭제 반영은 같은 코드의 10-07 E1 결과 유지 |
+| QA-WEB-15 | FE | 통과 | 조현재(에이전트) | 2026-10-07 | E1 `24e49e1`(PR #115 포함) | 1–4·6–8 통과(E1, 본인 qa 이미지 1장 삭제 12→11). 5번 전체 삭제는 300장 ID 본문 11,409바이트가 프록시 한도 8,192바이트를 넘어 413이었음(원인 확인). 한도를 16,384바이트로 올리고 300장 삭제 시험을 추가해 수정(0c679cd). 확인 시점 300장만 보내고 새 이미지는 제외하는 로직은 정상. 배포 뒤 서버에서 한 번 더 확인 **서버 재확인(10-07, 수정 배포 뒤): 존재하지 않는 ID 300개(본문 약 11.7KB)로 전체 삭제 요청 → 200, 공용 이미지 300장은 그대로 유지.** · **10-08 관리자 페이지(`/admin`) 재확인 통과**(dev `e960d1f`, 로컬 웹 + QA 중계: 조회는 E1, 설정·삭제는 중계 안에서만): 탭 `검수 이미지 300장` = `retention.images`·안내·요약(n/100·n/200)·열 6개·미리보기(1000px)·닫기·삭제 확인 문구와 요청 ID(한 장은 해당 ID 1개, 전체는 확인 창을 연 시점 300개). 실제 삭제 반영은 같은 코드의 10-07 E1 결과 유지 |
 | QA-WEB-16 | FE | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 메인 화면 20초: 처리 중 사과 live_ 미리보기 120건, 검수 원본 미리보기 0건(기대값을 live_ 제외로 정정) |
 | QA-WEB-17 | FE | 통과 | 조현재(에이전트) | 2026-10-07 09:27~09:40 | dev da6872f / cal-20260930 | 10-06 FE-08 결과 갈음: 서버 3100 7개 크기 · **10-08 관리자 페이지(`/admin`) 재확인**(dev `e960d1f`, 로컬 웹 + QA 중계: 조회는 E1, 설정·삭제는 중계 안에서만): 관제 화면은 상단 버튼이 링크 2개로 줄었을 뿐 패널 배치가 같아 10-06 결과 유지, 관리자 페이지는 무스크롤 대상 아님 |
 | QA-WEB-18 | FE | 통과 | 조현재(에이전트) | 2026-10-07 | dev da6872f 웹 / E1 조회 + QA 중계 | a~e는 E1 3100(a 404·b 405·c 403·d 413·e 헤더). f: Backend 주소 빈 값으로 실행 → 503 BACKEND_UNCONFIGURED. g: 중계 끊김 → 503 BACKEND_UNAVAILABLE |
@@ -1400,7 +1400,7 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 | QA-SIM-10 | BE | 통과 | BE(#103 보고) | 2026-10-07 | E1 `24e49e1` | 토큰 없음·잘못된 토큰 403, 공개 history·이미지 부작용 없음, 일반 요청 200. 공개 데이터 근거로 통과(10-07 DM·FE 합의). [#103 BE 결과](https://github.com/yuudong123/CQC/issues/103) |
 | QA-SIM-11 | BE | | | | |  |
 | QA-SIM-12 | BE | | | | |  |
-| QA-SIM-13 | DM | 통과 | 조현재(에이전트)·MO-09·BE-10 | 2026-10-06~07 | dev 328baaa / cal-20260930 | 제안 기준(간격 중앙 2.0±0.1초·최대 4초 미만·시간 초과/오류 0·재검사 20% 이하·0.5±0.05건/초)으로 판정. 다른 시험과 겹치지 않은 회차: 10-06 14:23(중앙 1.996·최대 2.500·0.500건/초·오류 0, MO-09), 10-07 09:23(중앙 1.997·p90 2.182·최대 3.013·재검사 10%·오류 0). 다른 시험과 겹친 10-06 11:04·10-07 09:27 회차는 판정에서 제외. 저장·통계·CSV 100건 일치는 BE-10 E2E-01 |
+| QA-SIM-13 | DM | 실패(10-12 수용시험 회차) | MO 실행 · DM 판정 | 2026-10-12 09:46:15~09:49:47 KST | Jenkins #139 `b5f1995`(배포 4/4 일치) | 중앙 1.995초·0.472건/초·재검사 9%·시간 초과/오류 0은 충족, **최대 완료 간격 5.755초(4초 미만 기준) 미충족**. 빌드 겹침 없음. 큰 간격 직후 모델 추론 165·152ms로 정상 → 모델 밖 구간 지연, 원인 BE·MO 확인 중. 재측정 1회 예정. [DM 판정·분석](https://github.com/yuudong123/CQC/issues/65#issuecomment-6115958487) / 이전 회차: 제안 기준(간격 중앙 2.0±0.1초·최대 4초 미만·시간 초과/오류 0·재검사 20% 이하·0.5±0.05건/초)으로 판정. 다른 시험과 겹치지 않은 회차: 10-06 14:23(중앙 1.996·최대 2.500·0.500건/초·오류 0, MO-09), 10-07 09:23(중앙 1.997·p90 2.182·최대 3.013·재검사 10%·오류 0). 다른 시험과 겹친 10-06 11:04·10-07 09:27 회차는 판정에서 제외. 저장·통계·CSV 100건 일치는 BE-10 E2E-01 |
 | QA-AUTO-01 | BE | 부분 검증(대행, BE 검수) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | 노트북 로컬 · `1e6ff23` | Windows 563 통과·91 건너뜀(MySQL URL 미지정)·2 실패(WinError 5, KI-8) → 같은 시험이 Linux PR #119 python 검사에서 통과. [대행 결과](../../results/qa-be-proxy-20261008/README.md) |
 | QA-AUTO-02 | BE | 미실행(BE·MO로 반환) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | 노트북 로컬 · `1e6ff23` | 노트북에 Docker·MySQL 없음. E2 MySQL에서 실행 필요. [대행 결과](../../results/qa-be-proxy-20261008/README.md) |
 | QA-AUTO-03 | FE | 통과 | 조현재(에이전트) | 2026-10-07 11:40 | dev 328baaa | 웹 시험 52/52, tsc 0, ESLint 오류 0·경고 5(기존 시험 파일 미사용 변수), next build 성공 |
