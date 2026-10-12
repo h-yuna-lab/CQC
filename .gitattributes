@@ -3,3 +3,6 @@ scripts/ci/*.sh text eol=lf
 
 # Preserve QA evidence bytes so the recorded SHA-256 hashes survive Git checkout.
 docs/wbs/results/qa-mo-20261007-evidence/** -text
+docs/wbs/results/qa-mo-20261012-stage2/** -text
+docs/wbs/results/qa-mo-20261012-stage3/** -text
+docs/wbs/results/qa-mo-e1-delay-20261012/** -text
