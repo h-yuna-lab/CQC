@@ -1254,6 +1254,8 @@ sim() { curl -s -w " HTTP%{http_code}\n" -X PUT $BE/v1/quality/simulator -H "Con
 - 절차: E2 MySQL에 시험용 DB를 만들고 `CQC_TEST_DATABASE_URL=mysql+pymysql://…/cqc_test python -m pytest tests/api -k mysql -q`
 - 기대 결과: 건너뜀 없이 통과.
 
+- 2026-10-12 최종 판정: Backend 담당자가 준비한 D 기반 독립 MySQL 8.4.11에서 같은 공식 시험 범위를 실행한 결과로 PASS 판정한다. 기존 E1·공유 E2 DB를 사용하거나 E2 원본 환경 검증을 수행한 것으로 기록하지 않는다. 선택 13건 전부 통과·실패/오류/skip 0이며 `-k mysql`로 deselected된 497건은 skip이 아니다. [최종 증거](../../results/qa-be-auto02-mysql-20261012/README.md).
+
 #### QA-AUTO-03 웹 시험·정적 검사·빌드 · P1
 
 - 절차: `cd cqc-logistics-platform/apps/web && npm test && npx tsc --noEmit && npm run lint && npm run build`
@@ -1307,7 +1309,7 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 
 ### 6.4 기록표
 
-> **2026-10-12 BE 최신 공식 집계: 33/44 확정 PASS, 잔여 11/44.** OPS-10·11 및 INS-14·17을 반영한 32/44에 AUTO-01을 추가했다. AUTO-01은 WSL2 Debian 13·Python 3.13.5·소스 `6f32cdd`의 전체 `tests data/sampling/tests` 662건에서 571 passed·91 조건부 skipped·실패 및 수집 오류 0건, subtest 20건 통과, 73.38초·종료 코드 0이다. BE-10 증거 감사 1건도 실제 MySQL URL 등 필수 환경변수 미설정에 따른 skip임을 코드로 확인했다. [공유 증거](../../results/qa-be-auto01-linux-20261012/README.md), [최종 검수](../../results/qa-be-20261010.md#12-2026-10-12-auto-01-linux-전체-시험-최종-판정). OPS-10·11의 Excel 웹 판정·데스크톱 미검증, INS-14의 E1 대체 증거 채택·E2 원본 제어 상세 미확보, INS-17의 다섯 ID 연결 판정은 유지한다. AUTO-02 등 다른 QA 판정 및 #65 수용시험 FAIL은 변경하지 않는다.
+> **2026-10-12 BE 최신 공식 집계: 34/44 확정 PASS, 잔여 10/44.** 기존 33/44에 AUTO-02를 추가했다. WSL2 Debian 13·Python 3.13.5·소스 `0094807`·D 기반 독립 MySQL 8.4.11에서 공식 tests/api -k mysql 범위 13 passed·실패/오류/skip 0, deselected 497건, 전체 최종 합계 510건, 12.62초·종료 코드 0을 확인했다. [AUTO-02 공유 증거](../../results/qa-be-auto02-mysql-20261012/README.md), [최종 판정](../../results/qa-be-20261010.md#13-2026-10-12-auto-02-격리-mysql-통합-시험-최종-판정). AUTO-01의 [Linux 전체 PASS](../../results/qa-be-auto01-linux-20261012/README.md), OPS-10·11 Excel 웹 검수, INS-14 E1 대체 채택·E2 원본 제어 상세 미확보, INS-17 다섯 연결 판정은 유지한다. INS-13 승인 보류, OPS-13 실환경 검증 대기, Simulator 잔여 항목 및 #65 공식 성능 FAIL 등 다른 판정은 변경하지 않는다. C 공간 감소 원인 미확정은 시험 PASS와 별개로 기록한다.
 
 > **2026-10-10 BE 공식 집계: 28/44 확정 PASS, 잔여 16/44.** [#103 기존 확정 26/44](https://github.com/yuudong123/CQC/issues/103#issuecomment-6055656308)에 포함되지 않았던 OPS-05·OPS-02를 최종 증거 검수 후 각각 PASS로 추가했다(26 + 2 = 28). 아래 10-08 후보 집계 설명은 당시 이력이며, 기존 대행 10개 최종 PASS는 #103 최종 판정을 따른다. 이번 변경은 OPS-05·OPS-02 결과와 최신 집계만 갱신하고 다른 QA 판정은 변경하지 않는다. [10-10 통합 보고](../../results/qa-be-20261010.md). [#103 통합 보고 등록](https://github.com/yuudong123/CQC/issues/103#issuecomment-6094439075).
 
@@ -1406,7 +1408,7 @@ BE-10(#66) 3·4단계는 같은 내용을 격리 환경에서 시험한다. BE-1
 | QA-SIM-12 | BE | | | | |  |
 | QA-SIM-13 | DM | 실패(10-12 수용시험 회차) | MO 실행 · DM 판정 | 2026-10-12 09:46:15~09:49:47 KST | Jenkins #139 `b5f1995`(배포 4/4 일치) | 중앙 1.995초·0.472건/초·재검사 9%·시간 초과/오류 0은 충족, **최대 완료 간격 5.755초(4초 미만 기준) 미충족**. 빌드 겹침 없음. 큰 간격 직후 모델 추론 165·152ms로 정상 → 모델 밖 구간 지연, 원인 BE·MO 확인 중. 재측정 1회 예정. [DM 판정·분석](https://github.com/yuudong123/CQC/issues/65#issuecomment-6115958487) / 이전 회차: 제안 기준(간격 중앙 2.0±0.1초·최대 4초 미만·시간 초과/오류 0·재검사 20% 이하·0.5±0.05건/초)으로 판정. 다른 시험과 겹치지 않은 회차: 10-06 14:23(중앙 1.996·최대 2.500·0.500건/초·오류 0, MO-09), 10-07 09:23(중앙 1.997·p90 2.182·최대 3.013·재검사 10%·오류 0). 다른 시험과 겹친 10-06 11:04·10-07 09:27 회차는 판정에서 제외. 저장·통계·CSV 100건 일치는 BE-10 E2E-01 |
 | QA-AUTO-01 | BE | PASS | BE(Backend 최종 검수) | 2026-10-12 | WSL2 CQC-AUTO01·Debian 13·Python 3.13.5, 소스 `6f32cdd` | 전체 tests data/sampling/tests 662건(최종 합계), 571 passed·91 skipped·실패/수집 오류 0, subtest 20 통과, 경고 1, 73.38초·종료 코드 0. Skip: BE10 DB 70·운영 DB 12·일반 MySQL 7·순환 삭제 1·BE10 감사 1, 모두 실제 MySQL 필수 환경 미설정. 감사 1건은 DB URL을 포함한 all(url,run,evidence) 조건 확인. 제외·코드 수정·재실행 없음. [공유 로그·요약·환경](../../results/qa-be-auto01-linux-20261012/README.md), 원본 D:\CQC-AUTO01\evidence\auto01-pytest.log. 과거 Windows WinError 5·CI 일부 범위 기록은 [당시 증거](../../results/qa-be-proxy-20261008/README.md)로 보존 |
-| QA-AUTO-02 | BE | 미실행(BE·MO로 반환) | 조현재(에이전트) | 2026-10-08 15:27~15:50 | 노트북 로컬 · `1e6ff23` | 노트북에 Docker·MySQL 없음. E2 MySQL에서 실행 필요. [대행 결과](../../results/qa-be-proxy-20261008/README.md) |
+| QA-AUTO-02 | BE | PASS | BE(Backend 최종 검수) | 2026-10-12 | WSL2 CQC-AUTO01·Debian 13·Python 3.13.5·MySQL 8.4.11, 소스 `0094807` | 공식 tests/api -k mysql 1회, 13 passed·실패/오류/skip 0, 497 deselected(skip 아님), 전체 최종 합계 510, 12.62초·종료 0. D 기반 독립 namespace의 전용 DB 3개, migration 20260929_02·mapping 각 13. 사후 일반/순환 DB 0/0/0, be10_3 5/5/1(의도된 INFERENCE_HTTP_ERROR). 개별 ID 목록은 정적 대조 자료로 q 로그의 전체 PASS와 구분. [로그·전후 DB·요약](../../results/qa-be-auto02-mysql-20261012/README.md). 10/08 미실행은 [당시 이력](../../results/qa-be-proxy-20261008/README.md)으로 보존 |
 | QA-AUTO-03 | FE | 통과 | 조현재(에이전트) | 2026-10-07 11:40 | dev 328baaa | 웹 시험 52/52, tsc 0, ESLint 오류 0·경고 5(기존 시험 파일 미사용 변수), next build 성공 |
 
 ### 6.4.1 BE-10 완료 증거와 ALL-04 후속 경계
